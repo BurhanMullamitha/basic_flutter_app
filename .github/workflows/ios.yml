@@ -40,17 +40,11 @@ jobs:
       - name: Ensure iOS folder exists
         run: flutter create .
 
-      # 6. Install CocoaPods dependencies
-      - name: Install CocoaPods
-        run: |
-          cd ios
-          pod install
-
-      # 7. Build iOS app (unsigned)
+      # 6. Build iOS app (unsigned)
       - name: Build iOS
         run: flutter build ios --release --no-codesign
 
-      # 8. Upload build artifacts
+      # 7. Upload build artifacts
       - name: Upload iOS build artifacts
         uses: actions/upload-artifact@v4
         with:
