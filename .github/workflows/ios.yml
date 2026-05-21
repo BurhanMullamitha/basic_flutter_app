@@ -1,0 +1,58 @@
+name: Flutter iOS CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-ios:
+    name: Build Flutter iOS
+    runs-on: macos-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Install Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.2'
+          channel: stable
+
+      # 3. Verify Flutter installation
+      - name: Flutter Doctor
+        run: flutter doctor -v
+
+      # 4. Install dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. Enable iOS platform
+      - name: Ensure iOS folder exists
+        run: flutter create .
+
+      # 6. Install CocoaPods dependencies
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+
+      # 7. Build iOS app (unsigned)
+      - name: Build iOS
+        run: flutter build ios --release --no-codesign
+
+      # 8. Upload build artifacts
+      - name: Upload iOS build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build
+          path: build/ios/
